@@ -9,10 +9,8 @@ module Rulers
   # The main application class (for now, I guess)
   class Application
     def call(env)
-      if env['PATH_INFO'] == '/favicon.ico'
-        return [404, {'Content-Type' => 'text/html'}, []]
-      end
-      
+      return [404, { "Content-Type" => "text/html" }, []] if env["PATH_INFO"] == "/favicon.ico"
+
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
       text = controller.send(act)
