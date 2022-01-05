@@ -10,6 +10,7 @@ module Rulers
   class Application
     def call(env)
       return [404, { "Content-Type" => "text/html" }, []] if env["PATH_INFO"] == "/favicon.ico"
+      return [301, { "Location" => "https://google.com" }, []] if env["PATH_INFO"] == "/search"
 
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
