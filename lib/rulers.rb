@@ -8,7 +8,7 @@ require "rulers/routing"
 module Rulers
   # The main application class (for now, I guess)
   class Application
-    def call(_env)
+    def call(env)
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
       text = controller.send(act)
