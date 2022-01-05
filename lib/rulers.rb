@@ -6,6 +6,7 @@ require "rulers/average_two_numbers"
 require "rulers/routing"
 require "rulers/util"
 require "rulers/dependencies"
+require "rulers/controller"
 
 module Rulers
   # The main application class (for now, I guess)
@@ -19,14 +20,5 @@ module Rulers
       text = controller.send(act)
       [200, { "Content-Type" => "text/html" }, [text]]
     end
-  end
-
-  # This is the first controller class
-  class Controller
-    def initialize(env)
-      @env = env
-    end
-
-    attr_reader :env
   end
 end
