@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "rulers/version"
+require "rulers/version"
 require "rulers/array"
 require "rulers/average_two_numbers"
 require "rulers/routing"
+require "rulers/util"
+require "rulers/dependencies"
 
 module Rulers
   # The main application class (for now, I guess)
