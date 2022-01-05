@@ -9,10 +9,14 @@ module Rulers
   # The main application class (for now, I guess)
   class Application
     def call(env)
+      if env['PATH_INFO'] == '/favicon.ico'
+        return [404, {'Content-Type' => 'text/html'}, []]
+      end
+      
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
-      _text = controller.send(act)
-      [200, { "Content-Type" => "text/html" }, ["Hello from Ruby on Rulers!"]]
+      text = controller.send(act)
+      [200, { "Content-Type" => "text/html" }, [text]]
     end
   end
 
