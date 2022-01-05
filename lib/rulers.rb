@@ -11,18 +11,17 @@ module Rulers
     def call(env)
       klass, act = get_controller_and_action(env)
       controller = klass.new(env)
-      text = controller.send(act)
+      _text = controller.send(act)
       [200, { "Content-Type" => "text/html" }, ["Hello from Ruby on Rulers!"]]
     end
   end
 
+  # This is the first controller class
   class Controller
     def initialize(env)
       @env = env
     end
 
-    def env
-      @env
-    end
+    attr_reader :env
   end
 end
