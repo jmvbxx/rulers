@@ -3,6 +3,7 @@
 require "multi_json"
 
 module Rulers
+  # Model module
   module Model
     # FileModel class
     class FileModel
@@ -60,6 +61,18 @@ module Rulers
         FileModel.new "db/quotes/#{id}.json"
       end
       # rubocop:enable Metrics/AbcSize
+    end
+
+    def save
+      File.open(@filename, "w") do |f|
+        f.write <<~TEMPLATE
+          {
+            "submitter": "#{hash["submitter"]}",
+            "quote": "#{hash["quote"]}",
+            "attribution": "#{hash["attribution"]}"#{" "}
+          }
+        TEMPLATE
+      end
     end
   end
 end
