@@ -26,9 +26,17 @@ module Rulers
       end
 
       def self.find(id)
-        FileModel.new("db/quotes/#{id}.json")
-      rescue StandardError
-        nil
+        id = id.to_i
+        @dm_style_cache ||= {}
+        begin
+          return @dm_style_cache[id] if @dm_style_cache[id]
+
+          m = FileModel.new("db/quotes/#{id}.json")
+          @dm_style_cache[id] = m
+          m
+        rescue StandardError
+          nil
+        end
       end
 
       def self.all
@@ -61,17 +69,36 @@ module Rulers
         FileModel.new "db/quotes/#{id}.json"
       end
       # rubocop:enable Metrics/AbcSize
-    end
 
-    def save
-      File.open(@filename, "w") do |f|
-        f.write <<~TEMPLATE
-          {
-            "submitter": "#{hash["submitter"]}",
-            "quote": "#{hash["quote"]}",
-            "attribution": "#{hash["attribution"]}"#{" "}
-          }
-        TEMPLATE
+      def self.find_all_by_attrib(attrib, value)
+        id = 1
+        results = []
+        loop do
+          m = FileModel.find(id)
+          return results unless m
+
+          results.push(m) if m[attrib] == value
+          id += 1
+        end
+      end
+
+      def self.method_mission(method, *args)
+        if method.to_s[0..11] == "find_all_by_"
+          attrib = method.to_s[12..-1]
+          return find_all_by_attrib attrib, args[0]
+        end
+      end
+      
+      def save
+        File.open(@filename, "w") do |f|
+          f.write <<~TEMPLATE
+            {
+              "submitter": "#{@hash["submitter"]}",
+              "quote": "#{@hash["quote"]}",
+              "attribution": "#{@hash["attribution"]}"#{" "}
+            }
+          TEMPLATE
+        end
       end
     end
   end
