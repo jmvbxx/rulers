@@ -83,12 +83,12 @@ module Rulers
       end
 
       def self.method_mission(method, *args)
-        if method.to_s[0..11] == "find_all_by_"
-          attrib = method.to_s[12..-1]
-          return find_all_by_attrib attrib, args[0]
-        end
+        return unless method.to_s[0..11] == "find_all_by_"
+
+        attrib = method.to_s[12..]
+        find_all_by_attrib attrib, args[0]
       end
-      
+
       def save
         File.open(@filename, "w") do |f|
           f.write <<~TEMPLATE
