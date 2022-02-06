@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "sqlite3"
 require "rulers/util"
 
@@ -13,7 +15,7 @@ module Rulers
       def self.to_sql(val)
         case val
         when NilClass
-          'null'
+          "null"
         when Numeric
           val.to_s
         when String
@@ -30,28 +32,28 @@ module Rulers
           values[key] ? to_sql(values[key]) : "null"
         end
 
-        DB.execute <<SQL
-INSERT INTO #{table} (#{keys.join ","}) VALUES (#{vals.join ","});
-SQL
+        DB.execute <<~SQL
+          INSERT INTO #{table} (#{keys.join ","}) VALUES (#{vals.join ","});
+        SQL
         raw_vals = keys.map { |k| values[k] }
         data = Hash[keys.zip raw_vals]
         sql = "SELECT last_insert_rowid();"
         data["id"] = DB.execute(sql)[0][0]
-        self.new data
+        new data
       end
 
       def self.count
-        DB.execute(<<SQL)[0][0]
-SELECT COUNT(*) FROM #{table}
-SQL
+        DB.execute(<<~SQL)[0][0]
+          SELECT COUNT(*) FROM #{table}
+        SQL
       end
 
       def self.find(id)
-        row = DB.execute <<SQL
-SELECT #{schema.keys.join ","} FROM #{table} WHERE id = #{id};
-SQL
+        row = DB.execute <<~SQL
+          SELECT #{schema.keys.join ","} FROM #{table} WHERE id = #{id};
+        SQL
         data = Hash[schema.keys.zip row[0]]
-        self.new data
+        new data
       end
 
       def [](name)
@@ -72,16 +74,18 @@ SQL
           "#{k}=#{self.class.to_sql(v)}"
         end.join ","
 
-        DB.execute <<SQL
-UPDATE #{self.class.table}
-SET #{fields}
-WHERE id = #{@hash["id"]}
-SQL
+        DB.execute <<~SQL
+          UPDATE #{self.class.table}
+          SET #{fields}
+          WHERE id = #{@hash["id"]}
+        SQL
         true
       end
 
       def save
-        self.save! rescue false
+        save!
+      rescue StandardError
+        false
       end
 
       def self.table
@@ -90,12 +94,13 @@ SQL
 
       def self.schema
         return @schema if @schema
+
         @schema = {}
         DB.table_info(table) do |row|
           @schema[row["name"]] = row["type"]
         end
 
-        @schema.each do |name, type|
+        @schema.each do |name, _type|
           define_method(name) do
             self[name]
           end
