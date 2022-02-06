@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "erubis"
   spec.add_runtime_dependency "multi_json"
   spec.add_runtime_dependency "rack"
+  spec.add_runtime_dependency "sqlite3"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
