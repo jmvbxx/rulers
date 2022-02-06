@@ -7,6 +7,7 @@ DB = SQLite3::Database.new "test.db"
 
 module Rulers
   module Model
+    # new SQLite class
     class SQLite
       def initialize(data = nil)
         @hash = data
@@ -25,6 +26,7 @@ module Rulers
         end
       end
 
+      # rubocop:disable Metrics/AbcSize
       def self.create(values)
         values.delete "id"
         keys = schema.keys - ["id"]
@@ -41,6 +43,7 @@ module Rulers
         data["id"] = DB.execute(sql)[0][0]
         new data
       end
+      # rubocop:enable Metrics/AbcSize
 
       def self.count
         DB.execute(<<~SQL)[0][0]
